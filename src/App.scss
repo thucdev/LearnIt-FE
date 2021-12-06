@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:wght@400;600');
+
+$board-bg-color: #0079bf;
+$appbar-bg-color: #0067a3;
+$list-bg-color: #ebecf0;
+$common-element-bg: rgba(255, 255, 255, 0.24);
+
+$gap: 10px;
+$col-header-height: 46px;
+$col-footer-height: 46px;
+
+body {
+    margin: 0;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 14px;
+    line-height: 1.4em;
+}
+
+.trello-thucidol {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 40px 50px 1fr;
+    line-height: 1.3em;
+    background-color: $board-bg-color;
+
+    .navbar {
+        padding-left: $gap;
+        display: flex;
+        // justify-content: center;
+        align-items: center;
+
+        &.app {
+            background-color: $appbar-bg-color;
+            font-size: 1.5rem;
+        }
+        &.board {
+            background-color: $board-bg-color;
+            font-size: 1.1rem;
+        }
+    }
+
+    .board-columns {
+        display: flex;
+        margin: 0 $gap $gap;
+        overflow-x: auto;
+
+        &::-webkit-scrollbar {
+            -webkit-appearance: none;
+        }
+        &::-webkit-scrollbar:horizontal {
+            height: 11px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: $common-element-bg;
+            // border-bottom: 5px solid $list-bg-color;
+            border-radius: 5px;
+        }
+
+        .column {
+            flex: 0 0 auto;
+            width: 300px;
+            height: calc(100% - #{$gap});
+            &:not(:first-child) {
+                margin-left: 10px;
+            }
+
+            > * {
+                background-color: $list-bg-color;
+                color: #333;
+                padding: 0 8px;
+            }
+
+            header {
+                padding-left: 15px;
+                line-height: $col-header-height;
+                font-size: 16px;
+                height: $col-header-height;
+                font-weight: bold;
+                border-top-left-radius: 5px;
+                border-top-right-radius: 5px;
+            }
+
+            footer {
+                padding-left: $gap;
+                line-height: $col-footer-height;
+                font-size: 16px;
+                height: $col-footer-height;
+                border-bottom-left-radius: 5px;
+                border-bottom-right-radius: 5px;
+            }
+
+            ul {
+                list-style-type: none;
+                margin: 0;
+                max-height: calc(100% - #{$col-header-height} - #{$col-footer-height});
+                overflow-y: auto;
+                &::-webkit-scrollbar {
+                    -webkit-appearance: none;
+                }
+                &::-webkit-scrollbar:vertical {
+                    width: 11px;
+                }
+                &::-webkit-scrollbar-thumb {
+                    background-color: darken($list-bg-color, 15);
+                    border-right: 5px solid $list-bg-color;
+                }
+
+                li {
+                    background-color: white;
+                    padding: $gap;
+                    border-radius: 4px;
+                    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+                    &:not(:last-child) {
+                        margin-bottom: $gap;
+                    }
+
+                    img {
+                        display: block;
+                        width: calc(100% + 2 * #{$gap});
+                        margin: -10px 0 10px -10px;
+                        border-top-left-radius: 4px;
+                        border-top-right-radius: 4px;
+                    }
+                }
+            }
+        }
+    }
+}
