@@ -38,7 +38,7 @@ $col-footer-height: 46px;
         border-bottom-right-radius: 5px;
     }
 
-    ul.task-list {
+    ul.card-list {
         list-style-type: none;
         margin: 0;
         max-height: calc(100% - #{$col-header-height} - #{$col-footer-height});
