@@ -1,9 +1,11 @@
 @import '_setting.scss';
 
 .board-content {
+    height: $board-content-height;
     display: flex;
-    margin: 0 $gap $gap;
+    // margin: 0 $gap $gap;
     overflow-x: auto;
+    overflow-y: hidden;
 
     &::-webkit-scrollbar {
         -webkit-appearance: none;
@@ -15,5 +17,28 @@
         background-color: $common-element-bg;
         // border-bottom: 5px solid $list-bg-color;
         border-radius: 5px;
+    }
+
+    .column-drop-preview {
+        background-color: rgba(150, 150, 200, 0.1);
+        border: 1px dashed #abc;
+        margin: 5px 45px 5px 5px;
+    }
+
+    .add-new-column {
+        width: 250px;
+        background-color: rgba(236, 231, 231, 0.3);
+        height: 32px;
+        line-height: 32px;
+        cursor: pointer;
+        margin: 0 10px 0 10px;
+        color: white;
+        font-size: 15px;
+        padding: 4px 4px 4px 20px;
+        border-radius: 4px;
+
+        &:hover {
+            opacity: 0.8;
+        }
     }
 }

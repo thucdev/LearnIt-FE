@@ -4,14 +4,13 @@ $list-bg-color: #ebecf0;
 
 $col-header-height: 46px;
 $col-footer-height: 46px;
+$col-height: calc(#{$board-content-height} - #{$gap * 2});
 
 .column {
     flex: 0 0 auto;
     width: 300px;
-    height: calc(100% - #{$gap});
-    &:not(:first-child) {
-        margin-left: 10px;
-    }
+    height: $col-height;
+    margin-left: 10px;
 
     > * {
         background-color: $list-bg-color;
@@ -19,7 +18,8 @@ $col-footer-height: 46px;
         padding: 0 8px;
     }
 
-    header {
+    header.column-drag-handle {
+        cursor: pointer;
         padding-left: 15px;
         line-height: $col-header-height;
         font-size: 16px;
@@ -36,12 +36,20 @@ $col-footer-height: 46px;
         height: $col-footer-height;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
+        color: #888;
+        cursor: pointer;
+        .footer-actions {
+            margin-left: $gap;
+
+            &:hover {
+                color: #333;
+            }
+        }
     }
 
-    ul.card-list {
-        list-style-type: none;
+    .card-list {
         margin: 0;
-        max-height: calc(100% - #{$col-header-height} - #{$col-footer-height});
+        max-height: calc(#{$col-height} - #{$col-header-height} - #{$col-footer-height});
         overflow-y: auto;
         &::-webkit-scrollbar {
             -webkit-appearance: none;
@@ -52,6 +60,24 @@ $col-footer-height: 46px;
         &::-webkit-scrollbar-thumb {
             background-color: darken($list-bg-color, 15);
             border-right: 5px solid $list-bg-color;
+        }
+
+        .card-ghost {
+            transition: transform 0.18s ease;
+            transform: rotateZ(5deg);
+            font-weight: bold;
+        }
+
+        .card-ghost-drop {
+            transition: transform 0.18s ease-in-out;
+            transform: rotateZ(0deg);
+            font-weight: bold;
+        }
+
+        .card-drop-preview {
+            background-color: rgba(150, 150, 200, 0.1);
+            border: 1px dashed #abc;
+            margin: 5px;
         }
     }
 }
