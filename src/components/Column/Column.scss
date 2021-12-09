@@ -36,6 +36,15 @@ $col-height: calc(#{$board-content-height} - #{$gap * 2});
         height: $col-footer-height;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
+        color: #888;
+        cursor: pointer;
+        .footer-actions {
+            margin-left: $gap;
+
+            &:hover {
+                color: #333;
+            }
+        }
     }
 
     .card-list {
@@ -56,11 +65,13 @@ $col-height: calc(#{$board-content-height} - #{$gap * 2});
         .card-ghost {
             transition: transform 0.18s ease;
             transform: rotateZ(5deg);
+            font-weight: bold;
         }
 
         .card-ghost-drop {
             transition: transform 0.18s ease-in-out;
             transform: rotateZ(0deg);
+            font-weight: bold;
         }
 
         .card-drop-preview {

@@ -5,6 +5,7 @@ import {isEmpty} from 'lodash'
 import './BoardContent.scss'
 import {initialData} from 'actions/initialData'
 import {mapOrder} from 'utilities/sorts'
+import {applyDrag} from 'utilities/dragDrop'
 
 function BoardContent() {
     const [board, setBoard] = useState({})
@@ -12,11 +13,6 @@ function BoardContent() {
 
     useEffect(() => {
         const boardFromDB = initialData.boards.find((board) => board.id === 'board-1')
-
-        //sort column
-        // boardFromDB.columns.sort(function (a, b) {
-        //     return boardFromDB.columns.indexOf(a.id) - boardFromDB.columnOrder.indexOf(b.id)
-        // })
 
         if (boardFromDB) {
             setBoard(boardFromDB)
@@ -29,8 +25,30 @@ function BoardContent() {
         return <div>Board not found</div>
     }
 
-    const onColumnDrop = (dropResult) => {}
+    const onColumnDrop = (dropResult) => {
+        let newColumns = [...columns]
+        let newBoard = {...board}
+        console.log('newboard', newBoard)
+        console.log('newColum', newColumns)
 
+        newColumns = applyDrag(newColumns, dropResult)
+        newBoard.columnOrder = newColumns.map((column) => column.id)
+        newBoard.columns = newColumns
+        setColumns(newColumns)
+        setBoard(newBoard)
+    }
+
+    const onCardDrop = (columnId, dropResult) => {
+        if (dropResult.removeIndex !== null || dropResult.addedIndex !== null) {
+            let newColumns = [...columns]
+            let currentColumn = newColumns.find((column) => column.id === columnId)
+
+            currentColumn.cards = applyDrag(currentColumn.cards, dropResult)
+            currentColumn.cardOrder = currentColumn.cards.map((item) => item.id)
+
+            setColumns(newColumns)
+        }
+    }
     return (
         <div className='board-content'>
             <Container
@@ -47,11 +65,15 @@ function BoardContent() {
                 {columns.map((column, index) => {
                     return (
                         <Draggable key={index}>
-                            <Column column={column} />
+                            <Column column={column} onCardDrop={onCardDrop} />
                         </Draggable>
                     )
                 })}
             </Container>
+            <div className='add-new-column'>
+                <i className='fa fa-plus icon' />
+                Add another column
+            </div>
         </div>
     )
 }
