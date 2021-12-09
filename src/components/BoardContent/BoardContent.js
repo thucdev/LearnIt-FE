@@ -1,7 +1,8 @@
 import Column from 'components/Column/Column'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef, useCallback} from 'react'
 import {Container, Draggable} from 'react-smooth-dnd'
 import {isEmpty} from 'lodash'
+import {Container as BootstrapContainer, Col, Row, Form, Button} from 'react-bootstrap'
 import './BoardContent.scss'
 import {initialData} from 'actions/initialData'
 import {mapOrder} from 'utilities/sorts'
@@ -10,6 +11,10 @@ import {applyDrag} from 'utilities/dragDrop'
 function BoardContent() {
     const [board, setBoard] = useState({})
     const [columns, setColumns] = useState([])
+    const [openNewColumn, setOpenNewColumn] = useState(false)
+    const [newColumnTitle, setNewColumnTitle] = useState('')
+
+    const newColumInputRef = useRef(null)
 
     useEffect(() => {
         const boardFromDB = initialData.boards.find((board) => board.id === 'board-1')
@@ -18,8 +23,14 @@ function BoardContent() {
             setBoard(boardFromDB)
             setColumns(mapOrder(boardFromDB.columns, boardFromDB.columnOrder, 'id'))
         }
-        return () => {}
     }, [])
+
+    useEffect(() => {
+        if (newColumInputRef && newColumInputRef.current) {
+            newColumInputRef.current.focus()
+            newColumInputRef.current.select()
+        }
+    }, [openNewColumn])
 
     if (isEmpty(board)) {
         return <div>Board not found</div>
@@ -28,10 +39,10 @@ function BoardContent() {
     const onColumnDrop = (dropResult) => {
         let newColumns = [...columns]
         let newBoard = {...board}
-        console.log('newboard', newBoard)
-        console.log('newColum', newColumns)
 
+        console.log('new    column', newColumns)
         newColumns = applyDrag(newColumns, dropResult)
+
         newBoard.columnOrder = newColumns.map((column) => column.id)
         newBoard.columns = newColumns
         setColumns(newColumns)
@@ -48,6 +59,41 @@ function BoardContent() {
 
             setColumns(newColumns)
         }
+    }
+
+    const toggleOpenNewColumn = () => setOpenNewColumn(!openNewColumn)
+
+    // const onNewColumnTitleChange = useCallback((e) => setNewColumnTitle(e.target.value), [])
+    const onNewColumnTitleChange = (event) => {
+        setNewColumnTitle(event.target.value)
+    }
+
+    const addNewColumn = () => {
+        if (!newColumnTitle) {
+            newColumInputRef.current.focus()
+            return
+        }
+
+        const newColumnToAdd = {
+            id: Math.random().toString(36).substr(2, 5), // remove when call API
+            boardId: board.id,
+            title: newColumnTitle.trim(),
+            cardOrder: [],
+            cards: [],
+        }
+
+        console.log('newcol', newColumnToAdd)
+        let newColumns = [...columns]
+        newColumns.push(newColumnToAdd)
+
+        let newBoard = {...board}
+
+        newBoard.columnOrder = newColumns.map((column) => column.id)
+        newBoard.columns = newColumns
+        setColumns(newColumns)
+        setBoard(newBoard)
+        setNewColumnTitle('')
+        toggleOpenNewColumn()
     }
     return (
         <div className='board-content'>
@@ -70,10 +116,39 @@ function BoardContent() {
                     )
                 })}
             </Container>
-            <div className='add-new-column'>
-                <i className='fa fa-plus icon' />
-                Add another column
-            </div>
+
+            <BootstrapContainer className='trello-container'>
+                {!openNewColumn && (
+                    <Row>
+                        <Col className='add-new-column' onClick={toggleOpenNewColumn}>
+                            <i className='fa fa-plus icon' />
+                            Add another column
+                        </Col>
+                    </Row>
+                )}
+                {openNewColumn && (
+                    <Row>
+                        <Col className='enter-new-column'>
+                            <Form.Control
+                                size='sm'
+                                type='text'
+                                placeholder='Add new column...'
+                                className='input-enter-new-column'
+                                ref={newColumInputRef}
+                                value={newColumnTitle}
+                                onChange={(event) => onNewColumnTitleChange(event)}
+                                onKeyDown={(event) => event.key === 'Enter' && addNewColumn()}
+                            />
+                            <Button variant='success' size='sm' onClick={addNewColumn}>
+                                Add Column
+                            </Button>
+                            <span className='cancel-add-colum' onClick={toggleOpenNewColumn}>
+                                <i className='fa fa-trash' />
+                            </span>
+                        </Col>
+                    </Row>
+                )}
+            </BootstrapContainer>
         </div>
     )
 }
