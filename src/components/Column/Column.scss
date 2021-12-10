@@ -18,13 +18,53 @@ $col-height: calc(#{$board-content-height} - #{$gap * 2});
 
     header.column-drag-handle {
         cursor: pointer;
-        padding-left: 15px;
+        padding: 5px 8px;
         line-height: $col-header-height;
         font-size: 16px;
         height: $col-header-height;
         font-weight: bold;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
+        display: flex;
+        .column-title {
+            flex: 90%;
+        }
+
+        .column-dropdown-actions {
+            flex: 10%;
+
+            .dropdown-btn {
+                padding: 0 10px;
+                margin-top: -15px;
+                font-size: 16px;
+                font-weight: bold;
+                letter-spacing: 1px;
+                background-color: $col-bg-color;
+                border-color: $col-bg-color;
+                color: $app-main-text-color;
+
+                &:after {
+                    content: '...';
+                    border: none;
+                }
+                &:hover {
+                    background-color: darken($col-bg-color, 10);
+                    border-color: darken($col-bg-color, 10);
+                }
+            }
+
+            .dropdown-menu {
+                padding: 0;
+
+                a.dropdown-item {
+                    padding: 0.1rem 1rem;
+                    font-size: 1rem;
+                    &:not(:last-child) {
+                        border-bottom: 1px solid darken($col-bg-color, 5);
+                    }
+                }
+            }
+        }
     }
 
     footer {
