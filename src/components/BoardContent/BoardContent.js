@@ -1,5 +1,5 @@
 import Column from 'components/Column/Column'
-import React, {useState, useEffect, useRef, useCallback} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import {Container, Draggable} from 'react-smooth-dnd'
 import {isEmpty} from 'lodash'
 import {Container as BootstrapContainer, Col, Row, Form, Button} from 'react-bootstrap'
@@ -12,7 +12,10 @@ function BoardContent() {
     const [board, setBoard] = useState({})
     const [columns, setColumns] = useState([])
     const [openNewColumn, setOpenNewColumn] = useState(false)
+    const toggleOpenNewColumn = () => setOpenNewColumn(!openNewColumn)
+
     const [newColumnTitle, setNewColumnTitle] = useState('')
+    const onNewColumnTitleChange = (event) => setNewColumnTitle(event.target.value)
 
     const newColumInputRef = useRef(null)
 
@@ -59,13 +62,6 @@ function BoardContent() {
 
             setColumns(newColumns)
         }
-    }
-
-    const toggleOpenNewColumn = () => setOpenNewColumn(!openNewColumn)
-
-    // const onNewColumnTitleChange = useCallback((e) => setNewColumnTitle(e.target.value), [])
-    const onNewColumnTitleChange = (event) => {
-        setNewColumnTitle(event.target.value)
     }
 
     const addNewColumn = () => {
@@ -115,6 +111,7 @@ function BoardContent() {
         setColumns(newColumns)
         setBoard(newBoard)
     }
+
     return (
         <div className='board-content'>
             <Container
@@ -162,7 +159,7 @@ function BoardContent() {
                             <Button variant='success' size='sm' onClick={addNewColumn}>
                                 Add Column
                             </Button>
-                            <span className='cancel-add-colum' onClick={toggleOpenNewColumn}>
+                            <span className='cancel-item' onClick={toggleOpenNewColumn}>
                                 <i className='fa fa-trash' />
                             </span>
                         </Col>
