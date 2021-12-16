@@ -10,10 +10,11 @@ import {MODAL_ACTION_CONFIRM} from 'utilities/constants'
 import {ConfirmModal} from 'components/Common/ConfirmModal'
 import {useState, useEffect, useRef} from 'react'
 import {selectAllInlineText, setContentAfterPressEnter} from 'utilities/contentEditable'
+import {createNewCard, updateColumn} from 'actions/ApiCall'
 
 function Column(props) {
-    const {column, onCardDrop, onUpdateColumn} = props
-    const cards = mapOrder(column.cards, column.cardOrder, 'id')
+    const {column, onCardDrop, onUpdateColumnState} = props
+    const cards = mapOrder(column.cards, column.cardOrder, '_id')
 
     const [showConfirmModal, setShowConfirmModal] = useState(false)
     const [columnTitle, setColumnTitle] = useState('')
@@ -39,26 +40,35 @@ function Column(props) {
 
     const toggleShowConfirmModal = () => setShowConfirmModal(!showConfirmModal)
 
+    //Remove column
     const onConfirmModalAction = (type) => {
         if (type === MODAL_ACTION_CONFIRM) {
             const newColumn = {
                 ...column,
                 _destroy: true,
             }
-
-            onUpdateColumn(newColumn)
+            updateColumn(newColumn._id, newColumn).then((updatedColumn) => {
+                onUpdateColumnState(updatedColumn)
+            })
         }
         toggleShowConfirmModal()
     }
 
     const handleColumnTitleChange = (e) => setColumnTitle(e.target.value)
-    const handleColumnTitleBlur = () => {
-        const newColumn = {
-            ...column,
-            title: columnTitle,
-        }
 
-        onUpdateColumn(newColumn)
+    //Update column
+    const handleColumnTitleBlur = () => {
+        if (column.title !== columnTitle) {
+            const newColumn = {
+                ...column,
+                title: columnTitle,
+            }
+
+            updateColumn(newColumn._id, newColumn).then((updatedColumn) => {
+                updatedColumn.cards = newColumn.cards
+                onUpdateColumnState(updatedColumn)
+            })
+        }
     }
 
     const addNewCard = () => {
@@ -68,19 +78,19 @@ function Column(props) {
         }
 
         const newCardToAdd = {
-            id: Math.random().toString(36).substr(2, 5), // remove when call API
             boardId: column.boardId,
-            columnId: column.id,
+            columnId: column._id,
             title: newCardTitle.trim(),
-            cover: null,
         }
 
-        let newColumn = cloneDeep(column)
-        newColumn.cards.push(newCardToAdd)
-        newColumn.cardOrder.push(newCardToAdd.id)
-        onUpdateColumn(newColumn)
-        setNewCardTitle('')
-        toggleOpenNewCard()
+        createNewCard(newCardToAdd).then((card) => {
+            let newColumn = cloneDeep(column)
+            newColumn.cards.push(card)
+            newColumn.cardOrder.push(card._id)
+            onUpdateColumnState(newColumn)
+            setNewCardTitle('')
+            toggleOpenNewCard()
+        })
     }
 
     return (
@@ -115,7 +125,7 @@ function Column(props) {
             <div className='card-list'>
                 <Container
                     groupName='thucdo-dev'
-                    onDrop={(dropResult) => onCardDrop(column.id, dropResult)}
+                    onDrop={(dropResult) => onCardDrop(column._id, dropResult)}
                     getChildPayload={(index) => cards[index]}
                     dragClass='card-ghost'
                     dropClass='card-ghost-drop'
