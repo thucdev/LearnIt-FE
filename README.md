@@ -1,4 +1,4 @@
-# Trello clone with ThucDo
+# Create an app to track your progress when you learn something with ThucDev
 
 This project was bootstrapped with [Create React App]
 
